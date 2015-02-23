@@ -93,7 +93,7 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
 </table>
 
 ####Examples
-  ultradns_client 'createtest' do
+  `ultradns_client 'createtest' do
     username node['ultradns_client_test']['username']
     password node['ultradns_client_test']['password']
     zone 'api_test.com'
@@ -103,7 +103,7 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
     ttl 500
     connection_options 'host' => 'test-restapi.ultradns.com'
     action :create
-  end
+  end`
 
   ultradns_client 'update-test' do
    username node['ultradns_client_test']['username']
