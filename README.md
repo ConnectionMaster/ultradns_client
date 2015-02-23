@@ -15,12 +15,12 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
   </thead>
   <tr>
     <td>create</td>
-    <td>Create new record</td>
+    <td>Create new A or CNAME record</td>
     <td>true</td>
   </tr>
   <tr>
     <td>update</td>
-    <td>Update an existing record</td>
+    <td>Update an existing record. Supports modification of the record value or the TTL. To modify a record name, delete the old record and create a new one</td>
     <td>false</td>
   </tr>
   <tr>
@@ -38,6 +38,7 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
       <th>Description</th>
       <th>Required</th>
       <th>Allowed Values</th>
+      <th>Default</th>
     </tr>
   </thead>
   <tr>
@@ -45,42 +46,49 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
     <td>Neustar API username</td>
     <td>true</td>
     <td>Any</td>
+    <td>None</td>
   </tr>
   <tr>
     <td>password</td>
     <td>Neustar API password</td>
     <td>true</td>
     <td>Any</td>
+    <td>None</td>
   </tr>
   <tr>
     <td>zone</td>
     <td>DNS zone to modify. The zone must already exist on the account</td>
     <td>true</td>
     <td>Any</td>
+    <td>None</td>
   </tr>
   <tr>
     <td>record_name</td>
     <td>Record to be added / deleted / updated</td>
     <td>true</td>
     <td>Any</td>
+    <td>None</td>
   </tr>
   <tr>
     <td>record_type</td>
     <td>Type of record to create. Cannot be used to change an A record to a CNAME</td>
     <td>false</td>
     <td>A, CNAME</td>
+    <td>None</td>
   </tr>
   <tr>
     <td>record_value</td>
     <td>IP or other record that the entry should point to</td>
     <td>false</td>
     <td>Any</td>
+    <td>None</td>
   </tr>
   <tr>
     <td>ttl</td>
     <td>Record time to live, specified in seconds</td>
     <td>false</td>
     <td>Integer</td>
+    <td>300</td>
   </tr>
   <tr>
     <td>connection_options</td> 
@@ -88,6 +96,7 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
       Hash of connection options. Currently supports only `host` for overriding the default API endpoint
     </td>
     <td>false</td>
+    <td>{'host' => 'someapiendpoint'}</td>
     <td>{}</td>
   </tr>
 </table>
@@ -97,8 +106,8 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
 Create
 
     ultradns_client 'createtest' do
-      username node['ultradns_client_test']['username']
-      password node['ultradns_client_test']['password']
+      username node['ultradns_client']['username']
+      password node['ultradns_client']['password']
       zone 'api_test.com'
       record_name 'createtest'
       record_type 'A'
@@ -111,8 +120,8 @@ Create
 Update
 
     ultradns_client 'update-test' do
-     username node['ultradns_client_test']['username']
-     password node['ultradns_client_test']['password']
+     username node['ultradns_client']['username']
+     password node['ultradns_client']['password']
      zone 'api_test.com'
      record_name 'update-test'
      record_type 'A'
@@ -123,8 +132,8 @@ Update
 Delete
 
     ultradns_client 'delete-test' do
-      username node['ultradns_client_test']['username']
-      password node['ultradns_client_test']['password']
+      username node['ultradns_client']['username']
+      password node['ultradns_client']['password']
       zone 'api_test.com'
       record_name 'delete-test'
       record_type 'A'
@@ -133,11 +142,10 @@ Delete
 
 ## Usage
 
-### ultradns_client::default
-
 Include `ultradns_client::default` recipe
 
-###
+## Dependencies
+Communication with the API is through ultradns-sdk gem, <https://github.com/ultradns/ultradns-sdk-ruby>
 
 ## License and Authors
 
