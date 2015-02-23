@@ -62,28 +62,28 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
     <td>record_name</td>
     <td>Record to be added / deleted / updated</td>
     <td>true</td>
-    <td></td>
+    <td>Any</td>
   </tr>
   <tr>
     <td>record_type</td>
-    <td>A or CNAME</td>
+    <td>Type of record to create. Cannot be used to change an A record to a CNAME</td>
     <td>false</td>
     <td>A, CNAME</td>
   </tr>
   <tr>
     <td>record_value</td>
-    <td>IP or Record that the entry should point to</td>
+    <td>IP or other record that the entry should point to</td>
     <td>false</td>
-    <td></td>
+    <td>Any</td>
   </tr>
   <tr>
     <td>ttl</td>
-    <td>Time to live</td>
+    <td>Record time to live, specified in seconds</td>
     <td>false</td>
-    <td></td>
+    <td>Integer</td>
   </tr>
   <tr>
-    <td>connection_options</td>
+    <td>connection_options</td> 
     <td>
       Hash of connection options. Currently supports only `host` for overriding the default API endpoint
     </td>
@@ -93,37 +93,43 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
 </table>
 
 ####Examples
-  `ultradns_client 'createtest' do
-    username node['ultradns_client_test']['username']
-    password node['ultradns_client_test']['password']
-    zone 'api_test.com'
-    record_name 'createtest'
-    record_type 'A'
-    record_value '127.0.0.1'
-    ttl 500
-    connection_options 'host' => 'test-restapi.ultradns.com'
-    action :create
-  end`
 
-  ultradns_client 'update-test' do
-   username node['ultradns_client_test']['username']
-   password node['ultradns_client_test']['password']
-   zone 'api_test.com'
-   record_name 'update-test'
-   record_type 'A'
-   ttl 200
-   action :update
-  end
+Create
 
-  ultradns_client 'delete-test' do
-    username node['ultradns_client_test']['username']
-    password node['ultradns_client_test']['password']
-    zone 'api_test.com'
-    record_name 'delete-test'
-    record_type 'A'
-    record_value '127.0.0.1'
-    action :delete
-  end
+    ultradns_client 'createtest' do
+      username node['ultradns_client_test']['username']
+      password node['ultradns_client_test']['password']
+      zone 'api_test.com'
+      record_name 'createtest'
+      record_type 'A'
+      record_value '127.0.0.1'
+      ttl 500
+      connection_options 'host' => 'test-restapi.ultradns.com'
+      action :create
+    end
+
+Update
+
+    ultradns_client 'update-test' do
+     username node['ultradns_client_test']['username']
+     password node['ultradns_client_test']['password']
+     zone 'api_test.com'
+     record_name 'update-test'
+     record_type 'A'
+     ttl 200
+     action :update
+    end
+
+Delete
+
+    ultradns_client 'delete-test' do
+      username node['ultradns_client_test']['username']
+      password node['ultradns_client_test']['password']
+      zone 'api_test.com'
+      record_name 'delete-test'
+      record_type 'A'
+      action :delete
+    end
 
 ## Usage
 
