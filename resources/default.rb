@@ -7,5 +7,5 @@ attribute :zone, kind_of: String, required: true
 attribute :record_name, kind_of: String, required: true
 attribute :record_type, kind_of: String, regex: /(A|CNAME)/i, required: true
 attribute :record_value, kind_of: String
-attribute :ttl, kind_of: Integer
+attribute :ttl, kind_of: Integer, default: 300
 attribute :connection_options, default: {}
