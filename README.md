@@ -1,4 +1,4 @@
-# ultradns_client-cookbook
+# ultradns_client_cookbook
 
 Provides ultadns_client LWRP for interaction with the UltraDNS API
 
