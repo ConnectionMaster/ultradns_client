@@ -32,26 +32,6 @@ def load_current_resource
   @current_resource
 end
 
-def build_ownername(record_name, zone)
-  str = record_name.end_with?('.') ? record_name + zone : record_name + '.' + zone
-  zone.end_with?('.') ? str : str + '.'
-end
-
-def map_rdata(rdata)
-  rdata.first
-end
-
-def map_rrtype(rrtype)
-  if rrtype.match /^A/i
-    'A'
-  elsif rrtype.match /^CNAME/i
-    'CNAME'
-  else
-    Chef::Log.warn("Unrecognized rrType #{rrType}")
-    rrtype
-  end
-end
-
 action :create do
   # If there is already a record for the same name, don't try and create
   unless @record_exists
@@ -62,7 +42,7 @@ action :create do
 
       Chef::Log.debug("Create response: #{response}")
 
-      unless response.code < 300
+      unless response.code < 400
         error = get_error(response)
         Chef::Log.error("Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}")
         raise "Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}"
@@ -80,10 +60,10 @@ action :update do
 
         Chef::Log.debug("Modify Response: #{response}")
 
-        unless response.code < 300
+        unless response.code < 400
           error = get_error(response)
-          Chef::Log.error("Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}")
-          raise "Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}"
+          Chef::Log.error("Failed to modify record. #{error['errorCode']} : #{error['errorMessage']}")
+          raise "Failed to modify record. #{error['errorCode']} : #{error['errorMessage']}"
         end
       end
     end
@@ -96,10 +76,10 @@ action :delete do
       Chef::Log.debug("get_zone.rrset(#{new_resource.record_type}, #{new_resource.record_name}).delete")
       response = get_zone.rrset(new_resource.record_type, new_resource.record_name).delete
 
-      unless response.code < 300
+      unless response.code < 400
         error = get_error(response)
-        Chef::Log.error("Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}")
-        raise "Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}"
+        Chef::Log.error("Failed to delete record. #{error['errorCode']} : #{error['errorMessage']}")
+        raise "Failed to delete record. #{error['errorCode']} : #{error['errorMessage']}"
       end
     end
   end
@@ -107,7 +87,14 @@ end
 
 private
 
+# Combine record_name and zone in the same format used by Neustar
+def build_ownername(record_name, zone)
+  str = record_name.end_with?('.') ? record_name + zone : record_name + '.' + zone
+  zone.end_with?('.') ? str : str + '.'
+end
+
 def client
+  Chef::Log.warn("Ultradns::Client.new(#{new_resource.username}, #{new_resource.password}, #{new_resource.connection_options})")
   Ultradns::Client.new(new_resource.username, new_resource.password, new_resource.connection_options)
 end
 
@@ -128,6 +115,23 @@ def get_zone
   end
 
   @zone
+end
+
+def map_rdata(rdata)
+  rdata.first
+end
+
+# rrtype when returned from Neustar will have some additional text included
+# A (1) or CNAME (5)
+def map_rrtype(rrtype)
+  if rrtype.match /^A/i
+    'A'
+  elsif rrtype.match /^CNAME/i
+    'CNAME'
+  else
+    Chef::Log.warn("Unrecognized rrType #{rrType}")
+    rrtype
+  end
 end
 
 def request_failed(response, accepted_codes = [])
