@@ -103,7 +103,7 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
 
 ####Examples
 
-Create
+Create A record using the test API endpoint
 
     ultradns_client 'createtest' do
       username node['ultradns_client']['username']
@@ -113,11 +113,11 @@ Create
       record_type 'A'
       record_value '127.0.0.1'
       ttl 500
-      connection_options 'host' => 'test-restapi.ultradns.com'
+      connection_options :host => 'test-restapi.ultradns.com'
       action :create
     end
 
-Update
+Update A Record
 
     ultradns_client 'update-test' do
      username node['ultradns_client']['username']
@@ -129,14 +129,14 @@ Update
      action :update
     end
 
-Delete
+Delete CNAME Record
 
     ultradns_client 'delete-test' do
       username node['ultradns_client']['username']
       password node['ultradns_client']['password']
       zone 'api_test.com'
       record_name 'delete-test'
-      record_type 'A'
+      record_type 'CNAME'
       action :delete
     end
 
