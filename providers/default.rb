@@ -88,7 +88,7 @@ def check_response(response, message = '')
 end
 
 def client
-  Chef::Log.warn("Ultradns::Client.new(#{new_resource.username}, #{new_resource.password}, #{new_resource.connection_options})")
+  Chef::Log.debug("Ultradns::Client.new(#{new_resource.username}, #{new_resource.password}, #{new_resource.connection_options})")
   Ultradns::Client.new(new_resource.username, new_resource.password, new_resource.connection_options)
 end
 
