@@ -41,12 +41,7 @@ action :create do
       response = zone.rrset(new_resource.record_type, new_resource.record_name).create(new_resource.ttl, [new_resource.record_value])
 
       Chef::Log.debug("Create response: #{response}")
-
-      unless response.code < 400
-        error = get_error(response)
-        Chef::Log.error("Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}")
-        raise "Failed to create new record. #{error['errorCode']} : #{error['errorMessage']}"
-      end
+      check_response(response, 'Failed to create new record.')
     end
   end
 end
@@ -59,12 +54,7 @@ action :update do
         response = get_zone.rrset(new_resource.record_type, new_resource.record_name).update(new_resource.ttl, [new_resource.record_value])
 
         Chef::Log.debug("Modify Response: #{response}")
-
-        unless response.code < 400
-          error = get_error(response)
-          Chef::Log.error("Failed to modify record. #{error['errorCode']} : #{error['errorMessage']}")
-          raise "Failed to modify record. #{error['errorCode']} : #{error['errorMessage']}"
-        end
+        check_response(response, 'Failed to modify record.')
       end
     end
   end
@@ -76,11 +66,7 @@ action :delete do
       Chef::Log.debug("get_zone.rrset(#{new_resource.record_type}, #{new_resource.record_name}).delete")
       response = get_zone.rrset(new_resource.record_type, new_resource.record_name).delete
 
-      unless response.code < 400
-        error = get_error(response)
-        Chef::Log.error("Failed to delete record. #{error['errorCode']} : #{error['errorMessage']}")
-        raise "Failed to delete record. #{error['errorCode']} : #{error['errorMessage']}"
-      end
+      check_response(response, 'Failed to delete record.')
     end
   end
 end
@@ -93,25 +79,26 @@ def build_ownername(record_name, zone)
   zone.end_with?('.') ? str : str + '.'
 end
 
+def check_response(response, message = '')
+  if response.code >= 400
+    error = parsed_response.first rescue {}
+    Chef::Log.error("#{message} #{error['errorCode']} : #{error['errorMessage']}")
+    raise "#{message} #{error['errorCode']} : #{error['errorMessage']}"
+  end
+end
+
 def client
   Chef::Log.warn("Ultradns::Client.new(#{new_resource.username}, #{new_resource.password}, #{new_resource.connection_options})")
   Ultradns::Client.new(new_resource.username, new_resource.password, new_resource.connection_options)
 end
 
-def get_error(response)
-  response.first.is_a?(Hash) && response.first['errorCode'] ? response.first : nil
-end
-
 def get_zone
   if @zone.nil?
     @zone = client.zone(new_resource.zone)
-    metadata = @zone.metadata.parsed_response
 
-    if request_failed(metadata)
-      error = get_error(metadata)
-      Chef::Log.error("Could not retrieve requested zone, #{new_resource.zone}, #{error['error_code']} : #{error['errorMessage']}")
-      raise "Could not retrieve requested zone, #{new_resource.zone}, #{error['error_code']} : #{error['errorMessage']}"
-    end
+    # query the zone metadata in order to verify that it exists
+    response = @zone.metadata
+    check_response(response, "Could not retrieve requested zone, #{new_resource.zone}")
   end
 
   @zone
@@ -132,8 +119,4 @@ def map_rrtype(rrtype)
     Chef::Log.warn("Unrecognized rrType #{rrType}")
     rrtype
   end
-end
-
-def request_failed(response, accepted_codes = [])
-  response.first.is_a?(Hash) && response.first['errorCode'] && !accepted_codes.find_index { |c| c == response.first['errorCode'] }
 end
