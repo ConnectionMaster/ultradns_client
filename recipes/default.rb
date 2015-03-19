@@ -8,6 +8,8 @@
 #
 
 chef_gem 'ultradns-sdk' do
+  version '0.0.6'
+  compile_time true if Chef::Resource::ChefGem.method_defined?(:compile_time)
   action :nothing
 end.run_action(:install)
 
