@@ -5,101 +5,23 @@ Provides ultadns_client LWRP for interaction with the UltraDNS API
 ## Resources and Providers
 ###ultradns_client
 ####Actions
-<table>
-  <thead>
-    <tr>
-      <th>Action</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>create</td>
-    <td>Create new A or CNAME record</td>
-    <td>true</td>
-  </tr>
-  <tr>
-    <td>update</td>
-    <td>Update an existing record. Supports modification of the record value or the TTL. To modify a record name, delete the old record and create a new one</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>delete</td>
-    <td>Delete an existing record</td>
-    <td>false</td>
-  </tr>
-</table>
+|Action|Description|Default|
+|------|-----------|-------|
+|create|Create new A or CNAME record|true<|
+|update|Update an existing record. Supports modification of the record value or the TTL. To modify a record name, delete the old record and create a new one|false|
+|delete|Delete an existing record|false|
 
 ####Parameters
-<table>
-  <thead>
-    <tr>
-      <th>Attribute</th>
-      <th>Description</th>
-      <th>Required</th>
-      <th>Allowed Values</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>username</td>
-    <td>Neustar API username</td>
-    <td>true</td>
-    <td>Any</td>
-    <td>None</td>
-  </tr>
-  <tr>
-    <td>password</td>
-    <td>Neustar API password</td>
-    <td>true</td>
-    <td>Any</td>
-    <td>None</td>
-  </tr>
-  <tr>
-    <td>zone</td>
-    <td>DNS zone to modify. The zone must already exist on the account</td>
-    <td>true</td>
-    <td>Any</td>
-    <td>None</td>
-  </tr>
-  <tr>
-    <td>record_name</td>
-    <td>Record to be added / deleted / updated</td>
-    <td>true</td>
-    <td>Any</td>
-    <td>None</td>
-  </tr>
-  <tr>
-    <td>record_type</td>
-    <td>Type of record to create. Cannot be used to change an A record to a CNAME</td>
-    <td>false</td>
-    <td>A, CNAME</td>
-    <td>None</td>
-  </tr>
-  <tr>
-    <td>record_value</td>
-    <td>IP or other record that the entry should point to</td>
-    <td>false</td>
-    <td>Any</td>
-    <td>None</td>
-  </tr>
-  <tr>
-    <td>ttl</td>
-    <td>Record time to live, specified in seconds</td>
-    <td>false</td>
-    <td>Integer</td>
-    <td>300</td>
-  </tr>
-  <tr>
-    <td>connection_options</td> 
-    <td>
-      Hash of connection options. Currently supports only `host` for overriding the default API endpoint
-    </td>
-    <td>false</td>
-    <td>{'host' => 'someapiendpoint'}</td>
-    <td>{}</td>
-  </tr>
-</table>
+|Attribute|Description|Required|Allowed Values|Default|
+|---------|-----------|--------|--------------|-------|
+|username||Neustar API username||true||Any||None|
+|password||Neustar API password||true||Any||None|
+|zone||DNS zone to modify. The zone must already exist on the account||true||Any||None|
+|record_name||Record to be added / deleted / updated||true||Any||None|
+|record_type||Type of record to create. Cannot be used to change an A record to a CNAME||false||A, CNAME||None|
+|record_value||IP or other record that the entry should point to||false||Any||None|
+|ttl||Record time to live, specified in seconds||false||Integer||300|
+|connection_options|Hash of connection options. Currently supports only `host` for overriding the default API endpoint|false||{'host' => 'someapiendpoint'}||{}|
 
 ####Examples
 
